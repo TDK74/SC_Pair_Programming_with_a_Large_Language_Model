@@ -6,13 +6,10 @@ from utils import get_api_key
 
 
 ## ------------------------------------------------------ ##
-genai.configure(
-                api_key = get_api_key(),
+genai.configure(api_key = get_api_key(),
                 transport = "rest",
-                client_options = client_options_lib.ClientOptions(
-                        api_endpoint = os.getenv("GOOGLE_API_BASE"),
-                        )
-                )
+                client_options = client_options_lib.
+                                    ClientOptions(api_endpoint = os.getenv("GOOGLE_API_BASE"), ))
 
 ## ------------------------------------------------------ ##
 for m in genai.list_models():
@@ -21,9 +18,7 @@ for m in genai.list_models():
     print(f"generation methods:{m.supported_generation_methods}\n")
 
 ## ------------------------------------------------------ ##
-models = [m for m in genai.list_models()
-          if 'generateText'
-          in m.supported_generation_methods]
+models = [m for m in genai.list_models() if 'generateText' in m.supported_generation_methods]
 models
 
 ## ------------------------------------------------------ ##
@@ -34,14 +29,9 @@ model_bison
 model_flash = genai.GenerativeModel(model_name = 'gemini-1.5-flash')
 
 ## ------------------------------------------------------ ##
-def generate_text(prompt,
-                  model = model_flash,
-                  temperature = 0.0):
+def generate_text(prompt, model = model_flash, temperature = 0.0):
 
-    return model_flash.generate_content(
-                        prompt,
-                        generation_config = {'temperature': temperature}
-                        )
+    return model_flash.generate_content(prompt, generation_config = {'temperature' : temperature})
 
 ## ------------------------------------------------------ ##
 prompt = "Show me how to iterate across a list in Python."
