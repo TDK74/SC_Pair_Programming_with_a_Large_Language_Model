@@ -19,11 +19,11 @@ for m in genai.list_models():
 
 ## ------------------------------------------------------ ##
 models = [m for m in genai.list_models() if 'generateText' in m.supported_generation_methods]
-models
+print(models)
 
 ## ------------------------------------------------------ ##
 model_bison = models[0]
-model_bison
+print(model_bison)
 
 ## ------------------------------------------------------ ##
 model_flash = genai.GenerativeModel(model_name = 'gemini-1.5-flash')
