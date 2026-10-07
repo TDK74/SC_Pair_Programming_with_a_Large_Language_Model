@@ -15,7 +15,7 @@ genai.configure(api_key= get_api_key(),
 ## ------------------------------------------------------ ##
 models = [m for m in genai.list_models() if 'generateText' in m.supported_generation_methods]
 model_bison = models[0]
-model_bison
+print(model_bison)
 
 ## ------------------------------------------------------ ##
 model_flash = genai.GenerativeModel(model_name= 'gemini-1.5-flash')
@@ -32,6 +32,7 @@ prompt_template = """{priming}
                     {decorator}
 
                     Your solution:
+                    
                     """
 
 ## ------------------------------------------------------ ##
@@ -53,7 +54,6 @@ print(prompt)
 
 ## ------------------------------------------------------ ##
 completion = generate_text(prompt)
-
 print(completion.text)
 
 ## ------------------------------------------------------ ##
