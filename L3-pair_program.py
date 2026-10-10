@@ -6,22 +6,22 @@ from utils import get_api_key
 
 
 ## ------------------------------------------------------ ##
-genai.configure(api_key = get_api_key(),
-                transport = "rest",
-                client_options = client_options_lib.
-                                    ClientOptions(api_endpoint = os.getenv("GOOGLE_API_BASE"), ))
+genai.configure(api_key= get_api_key(),
+                transport= "rest",
+                client_options= client_options_lib.
+                                    ClientOptions(api_endpoint= os.getenv("GOOGLE_API_BASE"), ))
 
 ## ------------------------------------------------------ ##
 models = [m for m in genai.list_models() if 'generateText' in m.supported_generation_methods]
 model_bison = models[0]
-model_bison
+print(model_bison)
 
 ## ------------------------------------------------------ ##
-model_flash = genai.GenerativeModel(model_name = 'gemini-1.5-flash')
+model_flash = genai.GenerativeModel(model_name= 'gemini-1.5-flash')
 
 ## ------------------------------------------------------ ##
-def generate_text(prompt, model = model_flash, temperature = 0.0):
-    return model_flash.generate_content(prompt, generation_config = {'temperature' : temperature})
+def generate_text(prompt, model= model_flash, temperature= 0.0):
+    return model_flash.generate_content(prompt, generation_config= {'temperature' : temperature})
 
 ## ------------------------------------------------------ ##
 prompt_template = """ I don't think this code is the best way to do it in Python, can you help me?
@@ -38,7 +38,7 @@ question = """  def func_x(array):
         """
 
 ## ------------------------------------------------------ ##
-completion = generate_text(prompt = prompt_template.format(question = question))
+completion = generate_text(prompt= prompt_template.format(question= question))
 
 print(completion.text)
 
@@ -51,7 +51,7 @@ prompt_template = """ I don't think this code is the best way to do it in Python
                 """
 
 ## ------------------------------------------------------ ##
-completion = generate_text(prompt = prompt_template.format(question = question))
+completion = generate_text(prompt= prompt_template.format(question= question))
 
 print(completion.text)
 
@@ -65,7 +65,7 @@ prompt_template = """ I don't think this code is the best way to do it in Python
                 """
 
 ## ------------------------------------------------------ ##
-completion = generate_text(prompt = prompt_template.format(question = question))
+completion = generate_text(prompt= prompt_template.format(question= question))
 
 print(completion.text)
 
@@ -96,7 +96,7 @@ question = """  class Node:
         """
 
 ## ------------------------------------------------------ ##
-completion = generate_text(prompt = prompt_template.format(question = question)
+completion = generate_text(prompt= prompt_template.format(question= question)
                 )
 print(completion.text)
 
@@ -130,7 +130,7 @@ question = """  class Node:
         """
 
 ## ------------------------------------------------------ ##
-completion = generate_text(prompt = prompt_template.format(question = question))
+completion = generate_text(prompt= prompt_template.format(question= question))
 
 print(completion.text)
 
@@ -177,7 +177,7 @@ question = """
         """
 
 ## ------------------------------------------------------ ##
-completion = generate_text(prompt = prompt_template.format(question = question))
+completion = generate_text(prompt= prompt_template.format(question= question))
 
 print(completion.text)
 
@@ -254,7 +254,7 @@ question = """  class Node:
         """
 
 ## ------------------------------------------------------ ##
-completion = generate_text(prompt = prompt_template.format(question = question), temperature = 0.7)
+completion = generate_text(prompt= prompt_template.format(question= question), temperature= 0.7)
 
 print(completion.text)
 
@@ -283,7 +283,7 @@ class doubly_linked_list:
         node = self.head
 
         while node is not None:
-            print(node.data, end = " ")
+            print(node.data, end= " ")
             node = node.next
 
         print()
