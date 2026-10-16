@@ -6,10 +6,10 @@ from utils import get_api_key
 
 
 ## ------------------------------------------------------ ##
-genai.configure(api_key = get_api_key(),
-                transport = "rest",
-                client_options = client_options_lib.
-                                    ClientOptions(api_endpoint = os.getenv("GOOGLE_API_BASE"), ))
+genai.configure(api_key= get_api_key(),
+                transport= "rest",
+                client_options= client_options_lib.
+                                        ClientOptions(api_endpoint= os.getenv("GOOGLE_API_BASE"), ))
 
 ## ------------------------------------------------------ ##
 models = [m for m in genai.list_models() if 'generateText' in m.supported_generation_methods]
@@ -17,11 +17,11 @@ model_bison = models[0]
 print(model_bison)
 
 ## ------------------------------------------------------ ##
-model_flash = genai.GenerativeModel(model_name = 'gemini-1.5-flash')
+model_flash = genai.GenerativeModel(model_name= 'gemini-1.5-flash')
 
 ## ------------------------------------------------------ ##
-def generate_text(prompt, model = model_flash, temperature = 0.0):
-    return model_flash.generate_content(prompt, generation_config = {'temperature' : temperature})
+def generate_text(prompt, model= model_flash, temperature= 0.0):
+    return model_flash.generate_content(prompt, generation_config= {'temperature' : temperature})
 
 ## ------------------------------------------------------ ##
 # Note: Taken from https://github.com/lmoroney/odmlbook/blob/
@@ -294,175 +294,163 @@ CODE_BLOCK = """
 
 ## ------------------------------------------------------ ##
 CODE_BLOCK = """
-# replace this with your own code
+            # replace this with your own code
+            # some code from a course for explanation
 
-# some code from a course for explanation
+            import numpy as np
+            import matplotlib.pyplot as plt
 
-import numpy as np
-import matplotlib.pyplot as plt
+            # Simulate motion with constant velocity and noisy position measurements
 
-# Simulate motion with constant velocity and noisy position measurements
+            # Time step
+            dt = 1.0
 
-# Time step
-dt = 1.0
+            # State transition matrix (constant velocity model)
+            F = np.array([[1, dt],
+                        [0, 1]])
 
-# State transition matrix (constant velocity model)
-F = np.array([[1, dt],
-              [0, 1]])
+            # Observation matrix (we only measure the position)
+            H = np.array([[1, 0]])
 
-# Observation matrix (we only measure the position)
-H = np.array([[1, 0]])
+            # Process noise covariance matrix (uncertainty in model prediction)
+            Q = np.array([[1, 0],
+                        [0, 1]])
 
-# Process noise covariance matrix (uncertainty in model prediction)
-Q = np.array([[1, 0],
-              [0, 1]])
+            # Measurement noise covariance matrix (uncertainty in measurement)
+            R = np.array([[10]])
 
-# Measurement noise covariance matrix (uncertainty in measurement)
-R = np.array([[10]])
+            # Initial state estimate (position and velocity)
+            x = np.array([[0],  # Initial position
+                        [1]])  # Initial velocity
 
-# Initial state estimate (position and velocity)
-x = np.array([[0],  # Initial position
-              [1]])  # Initial velocity
+            # Initial estimate covariance matrix
+            P = np.array([[500, 0],
+                        [0, 500]])
 
-# Initial estimate covariance matrix
-P = np.array([[500, 0],
-              [0, 500]])
+            # Number of iterations (time steps)
+            n = 50
 
-# Number of iterations (time steps)
-n = 50
+            # Simulated true positions and noisy measurements
+            true_positions = []
+            measurements = []
+            velocities = []
+            position = 0
+            velocity = 1
 
-# Simulated true positions and noisy measurements
-true_positions = []
-measurements = []
-velocities = []
-position = 0
-velocity = 1
+            for i in range(n):
+                # True position and velocity (without noise)
+                position += velocity * dt
+                true_positions.append(position)
 
-for i in range(n):
-    # True position and velocity (without noise)
-    position += velocity * dt
-    true_positions.append(position)
+                # Noisy measurement (position)
+                noisy_measurement = position + np.random.normal(0, np.sqrt(R[0, 0]))
+                measurements.append(noisy_measurement)
 
-    # Noisy measurement (position)
-    noisy_measurement = position + np.random.normal(0, np.sqrt(R[0, 0]))
-    measurements.append(noisy_measurement)
+            # Kalman filter process
+            estimates = []  # Store position estimates
 
-# Kalman filter process
-estimates = []  # Store position estimates
+            for i in range(n):
+                # Prediction Step
+                x = np.dot(F, x)  # State prediction
+                P = np.dot(np.dot(F, P), F.T) + Q  # Covariance prediction
 
-for i in range(n):
-    # Prediction Step
-    x = np.dot(F, x)  # State prediction
-    P = np.dot(np.dot(F, P), F.T) + Q  # Covariance prediction
+                # Measurement update step (if we have a measurement)
+                z = np.array([[measurements[i]]])  # Current measurement (noisy position)
+                y = z - np.dot(H, x)  # Innovation (residual)
+                S = np.dot(H, np.dot(P, H.T)) + R  # Innovation covariance
+                K = np.dot(np.dot(P, H.T), np.linalg.inv(S))  # Kalman gain
 
-    # Measurement update step (if we have a measurement)
-    z = np.array([[measurements[i]]])  # Current measurement (noisy position)
-    y = z - np.dot(H, x)  # Innovation (residual)
-    S = np.dot(H, np.dot(P, H.T)) + R  # Innovation covariance
-    K = np.dot(np.dot(P, H.T), np.linalg.inv(S))  # Kalman gain
+                x = x + np.dot(K, y)  # Updated state estimate
+                P = np.dot(np.eye(2) - np.dot(K, H), P)  # Updated covariance estimate
 
-    x = x + np.dot(K, y)  # Updated state estimate
-    P = np.dot(np.eye(2) - np.dot(K, H), P)  # Updated covariance estimate
+                # Store the estimate
+                estimates.append(x[0, 0])
 
-    # Store the estimate
-    estimates.append(x[0, 0])
+            # Plot results
+            plt.figure(figsize= (10, 6))
+            plt.plot(true_positions, label= 'True Position')
+            plt.plot(measurements, 'ro', label= 'Noisy Measurements')
+            plt.plot(estimates, 'b-', label= 'Kalman Filter Estimate')
+            plt.legend()
+            plt.xlabel('Time Step')
+            plt.ylabel('Position')
+            plt.title('Kalman Filter for Position Estimation')
+            plt.show()
+            """
 
-# Plot results
-plt.figure(figsize=(10, 6))
-plt.plot(true_positions, label = 'True Position')
-plt.plot(measurements, 'ro', label = 'Noisy Measurements')
-plt.plot(estimates, 'b-', label = 'Kalman Filter Estimate')
-plt.legend()
-plt.xlabel('Time Step')
-plt.ylabel('Position')
-plt.title('Kalman Filter for Position Estimation')
-plt.show()
+prompt_template = """ Can you please explain how this code works?
 
-"""
+                    {question}
 
-prompt_template = """
-Can you please explain how this code works?
+                    Use a lot of detail and make it as clear as possible.
+                """
 
-{question}
-
-Use a lot of detail and make it as clear as possible.
-"""
-
-completion = generate_text(
-                prompt = prompt_template.format(question = CODE_BLOCK)
-                )
+completion = generate_text(prompt= prompt_template.format(question= CODE_BLOCK))
 print(completion.text)
 
 ## ------------------------------------------------------ ##
-prompt_template = """
-Please write technical documentation for this code and \n
-make it easy for a non ML/DL developer to understand:
+prompt_template = """ Please write technical documentation for this code and \n
+                    make it easy for a non ML/DL developer to understand:
 
-{question}
+                    {question}
 
-Output the results in markdown
-"""
+                    Output the results in markdown
+                """
 
 ## ------------------------------------------------------ ##
-completion = generate_text(
-                prompt = prompt_template.format(question = CODE_BLOCK)
-                )
+completion = generate_text(prompt= prompt_template.format(question= CODE_BLOCK))
 print(completion.text)
 
 ## ------------------------------------------------------ ##
 CODE_BLOCK = """
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+            import torch
+            import torch.nn as nn
+            import torch.nn.functional as F
 
 
-class MaskedSelfAttention(nn.Module):
+            class MaskedSelfAttention(nn.Module):
 
-    def __init__(self, d_model=2,
-                 row_dim=0,
-                 col_dim=1):
+                def __init__(self, d_model= 2,
+                            row_dim= 0,
+                            col_dim= 1):
 
-        super().__init__()
+                    super().__init__()
 
-        self.W_q = nn.Linear(in_features=d_model, out_features=d_model, bias=False)
-        self.W_k = nn.Linear(in_features=d_model, out_features=d_model, bias=False)
-        self.W_v = nn.Linear(in_features=d_model, out_features=d_model, bias=False)
+                    self.W_q = nn.Linear(in_features= d_model, out_features= d_model, bias= False)
+                    self.W_k = nn.Linear(in_features= d_model, out_features= d_model, bias= False)
+                    self.W_v = nn.Linear(in_features= d_model, out_features= d_model, bias= False)
 
-        self.row_dim = row_dim
-        self.col_dim = col_dim
+                    self.row_dim = row_dim
+                    self.col_dim = col_dim
 
 
-    def forward(self, token_encodings, mask=None):
+                def forward(self, token_encodings, mask= None):
 
-        q = self.W_q(token_encodings)
-        k = self.W_k(token_encodings)
-        v = self.W_v(token_encodings)
+                    q = self.W_q(token_encodings)
+                    k = self.W_k(token_encodings)
+                    v = self.W_v(token_encodings)
 
-        sims = torch.matmul(q, k.transpose(dim0=self.row_dim, dim1=self.col_dim))
+                    sims = torch.matmul(q, k.transpose(dim0= self.row_dim, dim1= self.col_dim))
 
-        scaled_sims = sims / torch.tensor(k.size(self.col_dim)**0.5)
+                    scaled_sims = sims / torch.tensor(k.size(self.col_dim) ** 0.5)
 
-        if mask is not None:
-            scaled_sims = scaled_sims.masked_fill(mask=mask, value=-1e9)
+                    if mask is not None:
+                        scaled_sims = scaled_sims.masked_fill(mask= mask, value= -1e9)
 
-        attention_percents = F.softmax(scaled_sims, dim=self.col_dim)
+                    attention_percents = F.softmax(scaled_sims, dim= self.col_dim)
 
-        attention_scores = torch.matmul(attention_percents, v)
+                    attention_scores = torch.matmul(attention_percents, v)
 
-        return attention_scores
+                    return attention_scores
+            """
 
-"""
+prompt_template = """ Please write technical documentation for this code and \n
+                    make it easy for a non Python developer to understand:
 
-prompt_template = """
-Please write technical documentation for this code and \n
-make it easy for a non Python developer to understand:
+                    {question}
 
-{question}
+                    Output the results in markdown
+                """
 
-Output the results in markdown
-"""
-
-completion = generate_text(
-                prompt = prompt_template.format(question = CODE_BLOCK)
-                )
+completion = generate_text(prompt= prompt_template.format(question= CODE_BLOCK))
 print(completion.text)
